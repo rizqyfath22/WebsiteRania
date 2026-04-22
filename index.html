@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Rania - Official Estetik</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* --- 1. CORE STYLE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* --- 2. LOGIN SYSTEM --- */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('logbg.jpg');
+            background-size: cover; background-position: center; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-container {
+            width: 90%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 40px;
+        }
+        .login-text-side h1 { font-size: clamp(35px, 5vw, 50px); line-height: 1.1; }
+        .login-text-side h1 span { color: #ff7b00; }
+        .login-box {
+            width: 350px; background: rgba(0,0,0,0.9); padding: 40px; border-radius: 15px; border: 1px solid #333; text-align: center;
+        }
+        .login-box h2 { background: white; color: #ff7b00; padding: 10px; border-radius: 5px; margin-bottom: 25px; }
+        .login-box input {
+            width: 100%; padding: 12px; margin-bottom: 15px; background: transparent; border: none;
+            border-bottom: 1px solid #555; color: white; outline: none;
+        }
+        .btn-login-trigger {
+            width: 100%; padding: 12px; background: #ff7b00; border: none; border-radius: 5px; color: black;
+            font-weight: bold; cursor: pointer;
+        }
+
+        /* --- 3. LAYOUT UMUM --- */
+        /* --- UPDATE POSISI NAVIGASI KE TENGAH ATAS --- */
+nav {
+    position: fixed; 
+    top: 20px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    display: none; 
+    padding: 10px 25px; 
+    gap: 15px; 
+    z-index: 1000;
+    
+    /* Efek Kaca Fleksibel */
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    /* KUNCI: Transisi halus untuk semua perubahan property */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Class tambahan saat scroll ke bawah (akan dipicu JS) */
+nav.scrolled {
+    top: 10px; /* Sedikit naik ke atas agar ringkas */
+    padding: 6px 15px; /* Mengecil */
+    background: rgba(0, 0, 0, 0.6); /* Lebih gelap agar teks video terbaca */
+    transform: translateX(-50%) scale(0.9); /* Sedikit mengecil */
+    border-color: rgba(255, 123, 0, 0.5); /* Berubah warna border tipis oranye */
+}
+        /* --- UPDATE MENU NAVIGASI GLOW & TIMBUL --- */
+nav a { 
+    text-decoration: none; 
+    color: white; 
+    border: 1px solid #444; 
+    padding: 8px 20px; 
+    border-radius: 20px; 
+    font-size: 13px;
+    transition: all 0.3s ease; /* Transisi halus untuk semua perubahan */
+    background: rgba(0, 0, 0, 0.5); /* Background agak gelap transparan */
+    backdrop-filter: blur(5px); /* Efek kaca di menu */
+    display: inline-block;
+    transition: 0.3s;
+}
+
+/* Efek saat kursor mendekat (Hover) */
+nav a:hover { 
+    color: #ff7b00; /* Warna teks jadi oranye menyala */
+    border-color: #ff7b00; 
+    transform: translateY(-5px) scale(1.1); /* Efek TIMBUL (naik ke atas & membesar sedikit) */
+    
+    /* Efek GLOW IN THE DARK */
+    box-shadow: 0 0 15px #ff7b00, inset 0 0 10px rgba(255, 123, 0, 0.5); 
+    text-shadow: 0 0 8px #ff7b00; 
+}
+
+/* Efek saat diklik (Pressed) */
+/* Styling untuk menu yang sedang aktif */
+nav a.active {
+    background: #ff7b00;
+    color: black;
+    box-shadow: 0 0 15px rgba(255, 123, 0, 0.5);
+    transform: scale(1.05); /* Membesar halus saat aktif */
+}
+        
+        section {
+            width: 100%; display: none; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+
+     /* --- HALAMAN 1: PERBAIKAN TOTAL LINGKARAN & FOTO (INSPIRASI CONTOH) --- */
+        /* --- HALAMAN 1: PERBAIKAN TATA LETAK & BACKDROP --- */
+#page1 { 
+    height: 100vh; 
+    background: #000; /* Warna dasar tetap hitam */
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 0 10%; 
+    
+    /* --- PENTING UNTUK LAMPU SOROT --- */
+    position: relative; 
+    overflow: hidden; /* Agar cahaya tidak bocor ke halaman lain */
+    z-index: 1;
+}
+        /* --- EFEK DEBU CAHAYA (PARTICLES) --- */
+/* --- 1. EFEK DEBU CAHAYA (Tetap di BEFORE) --- */
+#page1::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+        radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255, 123, 0, 0.05) 1px, transparent 1px);
+    background-size: 80px 80px, 150px 150px;
+    animation: moveParticles 30s linear infinite;
+    z-index: 0; /* Paling belakang */
+    pointer-events: none;
+}
+
+/* --- 2. EFEK 3 LAMPU SOROT (Baru di AFTER) --- */
+#page1::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: 
+        radial-gradient(ellipse 30% 60% at 5% 0%, rgba(255, 255, 255, 0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 70% at 50% 0%, rgba(255, 255, 255, 0.2) 0%, transparent 75%),
+        radial-gradient(ellipse 30% 60% at 95% 0%, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    z-index: 1; /* Di atas partikel, tapi di bawah teks/foto */
+    pointer-events: none;
+    filter: blur(10px);
+}
+
+/* Animasi Partikel jangan dihapus */
+@keyframes moveParticles {
+    from { background-position: 0 0; }
+    to { background-position: 1000px 1000px; }
+}
+
+       /* Update CSS untuk efek mengetik */
+.typing-text {
+    font-size: clamp(40px, 8vw, 80px); /* Ukuran tetap mengikuti h1 asli */
+    line-height: 1.1;
+    border-right: 4px solid #ff7b00; /* Kursor ketik */
+    white-space: nowrap; /* Mencegah teks turun ke bawah saat mengetik */
+    overflow: hidden; /* Menyembunyikan teks yang belum diketik */
+    width: 0; /* Mulai dari lebar kosong */
+    max-width: fit-content; /* Membatasi agar tidak memakan seluruh lebar layar */
+    animation: 
+        typing 3.5s steps(20, end) infinite, 
+        blink .75s step-end infinite;
+}
+
+/* Animasi untuk memanjangkan teks */
+@keyframes typing { 
+    from { width: 0 } 
+    to { width: 400px } /* Sesuaikan angka ini dengan panjang teks 'Halo Rania' */
+}
+
+/* Animasi kedipan kursor */
+@keyframes blink { 
+    from, to { border-color: transparent } 
+    50% { border-color: #ff7b00 } 
+}
+       
+        .hero-left h1 { 
+            font-size: clamp(40px, 8vw, 80px); 
+            line-height: 1;
+            text-shadow: none; 
+            position: relative;
+            z-index: 2; /* Di atas partikel */
+        }
+        .hero-left h1 span { 
+            color: #ff7b00; 
+            font-weight: 800;
+            text-shadow: none; 
+            position: relative;
+            z-index: 2; /* Di atas partikel */
+        }
+
+      /* --- BARIS KODE BARU UNTUK LINGKARAN & RANIA --- */
+        .hero-right-potrait { 
+            position: relative; 
+            width: 450px; /* Ukuran square agar lingkaran sempurna */
+            height: 450px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            z-index: 2; /* Di atas partikel */
+        }
+
+        /* 1. LINGKARAN GARIS TIPIS, PANJANG & GLOW (PERBAIKAN) */
+        .outer-ring {
+            position: absolute;
+            width: 100%; 
+            height: 100%;
+            border-radius: 50%;
+            
+            /* -- PERBAIKAN: LEBIH TIPIS (UBAH JADI 3PX/4PX) -- */
+            border: 4px solid rgba(255, 123, 0, 0.4); 
+            
+            /* -- PERBAIKAN: GARIS LEBIH PANJANG (TEKNIK CLIP-PATH BUSUR) -- */
+            /* Ini membuat efek garis oranye yang panjang mengelilingi */
+            border-top: 4px solid #ff7b00;
+            border-bottom: 4px solid #ff7b00;
+            clip-path: polygon(0 0, 100% 0, 100% 40%, 95% 40%, 95% 60%, 100% 60%, 100% 100%, 0 100%, 0 60%, 5% 60%, 5% 40%, 0 40%);
+
+            /* -- PERBAIKAN: GLOW DIKUATKAN -- */
+            box-shadow: 0 0 50px rgba(255, 123, 0, 0.6), inset 0 0 30px rgba(255, 123, 0, 0.3); 
+            
+            /* Animasi Muter Tetap Ada */
+            animation: rotateRing 15s linear infinite;
+            z-index: 1;
+        }
+
+        /* 2. WADAH FOTO: OVERFLOW HIDDEN AGAR RANIA DI DALAM */
+        /* Update CSS .circle-glow untuk Efek Lampu Sorot */
+.circle-glow {
+    width: 90%; 
+    height: 90%; 
+    border-radius: 50%;
+    position: relative; 
+    
+    /* Warna latar lingkaran sorotan awal */
+    background: radial-gradient(circle, rgba(255,123,0,0.2) 0%, rgba(0,0,0,1) 75%); 
+    
+    /* Box Shadow yang berpendar tebal (Glow di Garis Putus-putus) */
+    box-shadow: 0 0 70px rgba(255, 123, 0, 0.6), inset 0 0 40px rgba(255, 123, 0, 0.4); 
+    
+    border: 4px solid #ff7b00;
+    
+    /* Memastikan Foto di Tengah Presisi */
+    display: flex; 
+    align-items: flex-end; /* Duduk di dasar lingkaran */
+    justify-content: center; /* Horizontal Tengah */
+    overflow: hidden;
+    z-index: 2;
+    
+    /* --- TAMBAHKAN ANIMASI DISKO DI SINI --- */
+    /* Durasi 2s, berganti warna, berkedip cepat */
+    animation: blinkDisco 2s linear infinite alternate; 
+}
+
+/* Tambahkan Lampu Sorot Latar di Belakang Foto */
+.hero-right-potrait::after {
+    content: "";
+    position: absolute;
+    top: -20%; /* Posisi lampu sorot dari atas */
+    width: 150%;
+    height: 150%;
+    
+    /* Gradasi cahaya sorotan (Spotlight) */
+    background: radial-gradient(circle at center, rgba(255,123,0,0.2) 0%, transparent 60%);
+    
+    /* Blur halus untuk cahaya sorot */
+    filter: blur(20px);
+    
+    z-index: 0; /* Di belakang foto dan garis */
+    
+    /* Animasi Lampu Sorot Disko */
+    animation: spotlightDisco 4s linear infinite alternate;
+}
+
+/* --- ANIMASI DISKO BERGANTI WARNA & KEDIP CEPAT --- */
+@keyframes blinkDisco {
+    0% {
+        box-shadow: 0 0 70px rgba(255, 123, 0, 0.6), inset 0 0 40px rgba(255, 123, 0, 0.4);
+        background: radial-gradient(circle, rgba(255,123,0,0.2) 0%, rgba(0,0,0,1) 75%);
+    }
+    15% {
+        opacity: 0.7; /* Sedikit kedip */
+        box-shadow: 0 0 50px rgba(255, 123, 0, 0.5), inset 0 0 30px rgba(255, 123, 0, 0.3);
+    }
+    30% {
+        opacity: 1;
+        /* Ganti warna ke Merah Disko */
+        box-shadow: 0 0 90px rgba(255, 0, 0, 0.8), inset 0 0 50px rgba(255, 0, 0, 0.5);
+        background: radial-gradient(circle, rgba(255,0,0,0.3) 0%, rgba(0,0,0,1) 75%);
+    }
+    45% {
+        opacity: 0.8; /* Kedip lagi */
+        box-shadow: 0 0 70px rgba(255, 0, 0, 0.7), inset 0 0 40px rgba(255, 0, 0, 0.4);
+    }
+    60% {
+        opacity: 1;
+        /* Ganti warna ke Ungu Disko */
+        box-shadow: 0 0 100px rgba(255, 0, 255, 0.9), inset 0 0 60px rgba(255, 0, 255, 0.6);
+        background: radial-gradient(circle, rgba(255,0,255,0.4) 0%, rgba(0,0,0,1) 75%);
+    }
+    75% {
+        opacity: 0.9;
+        box-shadow: 0 0 80px rgba(255, 0, 255, 0.8), inset 0 0 50px rgba(255, 0, 255, 0.5);
+    }
+    100% {
+        opacity: 1;
+        /* Kembali ke Oranye Disko Terang */
+        box-shadow: 0 0 110px rgba(255, 123, 0, 1), inset 0 0 70px rgba(255, 123, 0, 0.7);
+        background: radial-gradient(circle, rgba(255,123,0,0.5) 0%, rgba(0,0,0,1) 75%);
+    }
+}
+
+/* --- ANIMASI SPOTLIGHT DISKO TERANG-REDUP --- */
+@keyframes spotlightDisco {
+    0% {
+        transform: rotate(0deg) scale(1);
+        opacity: 0.6;
+    }
+    25% {
+        transform: rotate(5deg) scale(1.1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: rotate(0deg) scale(1.2);
+        opacity: 0.4; /* Redup sebentar */
+    }
+    75% {
+        transform: rotate(-5deg) scale(1.1);
+        opacity: 0.9;
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+        opacity: 0.6;
+    }
+}
+
+        /* 3. PENYESUAIAN FOTO RANINYA (TEKNIK 1 FOTO) */
+        .circle-glow img {
+            /* Ukuran foto disesuaikan agar tidak meluap */
+            width: 100%; 
+            height: 100%;
+            
+            /* -- PERBAIKAN KUNCI: object-fit: cover agar foto mengisi lingkaran -- */
+            object-fit: cover; 
+            object-position: center; /* Fokus di tengah foto */
+            
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+            
+            /* -- PERBAIKAN KUNCI: Hapus margin negatif agar foto di dalam -- */
+            margin-bottom: 0; 
+        }
+
+        @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+
+        /* --- HALAMAN 2: SCROLL VIDEO --- */
+        #page2_container { display: none; height: 350vh; position: relative; background: #000; }
+        #page2_sticky { position: sticky; top: 0; height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        #scrollVideo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; z-index: 1; }
+        .overlay-black { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 2; }
+        .scroll-hint { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 10; text-align: center; color: #ff7b00; font-weight: bold; letter-spacing: 2px; }
+        .arrow-down { font-size: 30px; display: block; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+        .countdown-container { position: relative; z-index: 5; text-align: center; transition: transform 0.1s ease-out; }
+        #timer { font-family: monospace; font-size: clamp(30px, 6vw, 60px); background: rgba(0,0,0,0.5); padding: 20px 40px; border: 1px solid #ff7b00; border-radius: 15px; backdrop-filter: blur(10px); }
+
+        /* --- HALAMAN 3: VIDEO FRAME --- */
+        /* Update agar section memiliki ruang untuk frame */
+#page3 { 
+    height: 100vh; /* Pas satu layar */
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('bgweb.jpg'); 
+    background-size: cover; 
+    background-position: center;
+    display: none; /* Tetap flex saat login */
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Mencegah scroll */
+    box-shadow: inset 0 0 150px rgba(0,0,0,1);
+}
+
+.v-frame { 
+    width: 90%; 
+    max-width: 500px; /* Kita kecilkan sedikit lebarnya agar pas di HP/Laptop */
+    max-height: 85vh; /* KUNCI: Biar gak lebih dari 85% tinggi layar */
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #ff7b00; 
+    background: #000; 
+    padding: 15px; 
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(255, 123, 0, 0.4); 
+}
+
+#page3 video { 
+    width: 100%; 
+    max-height: 65vh; /* Video tidak boleh terlalu tinggi */
+    object-fit: contain; /* Agar video tidak terpotong */
+    border-radius: 5px;
+}
+
+.video-caption {
+    margin-top: 10px;
+    font-size: 14px; /* Kecilkan sedikit agar muat */
+    letter-spacing: 1px;
+}
+
+.video-caption span {
+    color: #ff7b00;
+    font-weight: bold;
+    text-shadow: 0 0 15px rgba(255, 123, 0, 0.6);
+}
+        video { width: 100%; height: 100%; }
+        footer { position: absolute; bottom: 30px; left: 40px; font-size: 11px; opacity: 0.4; letter-spacing: 2px; }
+
+        /* --- HALAMAN 4: Date Planner --- */
+        #page4 { min-height: 100vh; padding: 100px 20px; background: #000; }
+
+.planner-container { width: 100%; max-width: 800px; text-align: center; }
+.planner-container h2 span { color: #ff7b00; }
+
+.input-group { margin: 30px 0; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.input-group input { 
+    padding: 10px; background: #111; border: 1px solid #333; 
+    color: white; border-radius: 5px; outline: none;
+}
+.input-group button { 
+    padding: 10px 20px; background: #ff7b00; border: none; 
+    border-radius: 5px; cursor: pointer; font-weight: bold; 
+}
+
+.calendar-mockup { 
+    background: #111; border: 1px solid #ff7b00; border-radius: 15px; 
+    overflow: hidden; box-shadow: 0 0 20px rgba(255,123,0,0.2);
+}
+.cal-header { background: #ff7b00; color: black; padding: 10px; font-weight: bold; }
+.cal-grid { padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+
+/* Item list kegiatan */
+.date-item span:hover {
+    color: #ff7b00 !important;
+}
+
+#page4 {
+    display: none; /* Awalnya sembunyi, muncul setelah login */
+    flex-direction: column;
+    align-items: center;
+}
+.date-item strong { color: #ff7b00; display: block; margin-bottom: 5px; }
+
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Pastikan Page 5 identik dengan Page 4 secara struktur */
+#page5 {
+    min-height: 100vh;
+    padding: 100px 20px;
+    background: #000;
+    display: none; /* Akan diubah jadi flex oleh JS */
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid #333; /* Garis pembatas agar tidak terlihat menyatu */
+}
+
+/* Tambahkan ini agar konten di dalamnya tidak melebar liar */
+#page5 .planner-container {
+    width: 100%;
+    max-width: 800px;
+}
+
+/* --- HALAMAN 6: Curahan Hati --- */
+#page6 {
+    min-height: 100vh;
+    padding: 100px 20px;
+    background: #000;
+    display: none; /* Akan diubah jadi flex oleh JS */
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid #333;
+}
+
+/* Container untuk pesan agar bisa di-scroll */
+#wallCurhatLocal {
+    width: 100%;
+    max-height: 500px;
+    overflow-y: auto;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-right: 10px;
+}
+
+/* Styling kartu pesan mirip gambar */
+.curhat-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 15px;
+    border-left: 5px solid #ff7b00;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    animation: slideIn 0.3s ease-out;
+}
+
+.curhat-card strong {
+    color: #ff7b00;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.curhat-card p {
+    color: #eee;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-wrap; /* Agar enter/baris baru terlihat */
+}
+
+.curhat-card small {
+    color: #666;
+    font-size: 10px;
+    display: block;
+    margin-top: 10px;
+    text-align: right;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- HALAMAN 7: Galeri Foto --- */
+#page7 {
+    min-height: 100vh;
+    padding: 100px 20px;
+    background: #000;
+    display: none; /* Akan diubah jadi flex oleh JS */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #333;
+    overflow: hidden; /* Penting agar foto tidak meluber keluar layar */
+}
+
+/* Container utama untuk membatasi area pandang */
+.gallery-container {
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    overflow: hidden;
+    padding: 40px 0;
+    /* Efek fade (bayangan halus) di sisi kiri dan kanan */
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+/* Jalur yang menampung semua foto dan bergerak otomatis */
+.gallery-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    /* Durasi 60 detik untuk 20 foto agar tidak terlalu cepat */
+    animation: scrollGallery 60s linear infinite;
+}
+
+/* Styling untuk setiap foto */
+.gallery-track img {
+    height: 350px; /* Tinggi foto seragam */
+    width: auto;
+    aspect-ratio: 3/4; /* Proporsi portrait */
+    object-fit: cover;
+    border-radius: 20px;
+    border: 2px solid #222;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+/* Efek saat foto didekati kursor */
+.gallery-track img:hover {
+    transform: scale(1.05);
+    border-color: #ff7b00;
+}
+
+/* Logika Animasi Berjalan */
+@keyframes scrollGallery {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        /* Geser tepat 50% karena kita menduplikasi foto di HTML */
+        transform: translateX(-50%);
+    }
+}
+
+/* Berhenti bergerak saat disentuh */
+.gallery-track:hover {
+    animation-play-state: paused;
+}
+
+/* Responsif untuk HP */
+@media (max-width: 768px) {
+    .gallery-track img {
+        height: 250px;
+    }
+    #page7 {
+        padding: 60px 10px;
+    }
+}
+
+/* --- BACKGROUND & LAYOUT PAGE 8 --- */
+#page8 {
+    min-height: 100vh;
+    padding: 80px 20px;
+    /* Efek Background Superhero: Hitam dengan semburat Orange di tengah */
+    background: radial-gradient(circle at center, #1a0f00 0%, #0b0b0b 70%, #050505 100%);
+    display: none; /* Diubah jadi flex oleh JS */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-top: 1px solid #222;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Tambahkan efek garis-garis halus (grid) agar terlihat futuristik */
+#page8::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: linear-gradient(rgba(255, 123, 0, 0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 123, 0, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- STYLE HALAMAN 8: SUPER HERO --- */
+.social-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Warna khusus tiap platform */
+.wa { background: #25d366; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); }
+.ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); box-shadow: 0 4px 15px rgba(220, 39, 67, 0.3); }
+.tt { background: #000; border: 1px solid #444; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }
+
+/* Efek Hover Hero */
+.social-btn:hover {
+    transform: translateY(-8px) scale(1.05);
+    filter: brightness(1.2);
+}
+
+.social-btn i {
+    font-size: 1.2rem; /* Ukuran ikon sedikit lebih besar */
+    margin-right: 8px; /* Jarak antara ikon dan tulisan */
+}
+
+/* Tambahan untuk tombol TikTok agar garis putihnya terlihat jelas */
+.social-btn.tt {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Animasi Denyut Kekuatan Superhero */
+@keyframes heroPulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 123, 0, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255, 123, 0, 0.7); }
+    100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 123, 0, 0.4); }
+}
+
+/* --- RESPONSIVE ADJUSTMENTS (UNTUK HP) --- */
+@media (max-width: 768px) {
+    /* Login Box agar tidak terlalu lebar di HP */
+    .login-box {
+        width: 90% !important;
+        padding: 30px 20px !important;
+    }
+
+    /* Ukuran Judul di setiap halaman diperkecil sedikit */
+    h2 {
+        font-size: 1.6rem !important;
+    }
+
+    /* Page 7: Galeri Foto */
+    .gallery-track img {
+        height: 220px !important; /* Foto di galeri diperkecil di HP */
+    }
+
+    /* Page 8: Hero Profile */
+    .hero-profile img {
+        width: 120px !important;
+        height: 120px !important;
+    }
+
+    /* Agar tombol media sosial di Page 8 tersusun rapi */
+    .social-links {
+        gap: 10px !important;
+    }
+
+    .social-btn {
+        width: 100%; /* Tombol memenuhi lebar layar HP agar mudah diklik */
+        justify-content: center;
+        padding: 12px !important;
+    }
+
+    /* Box Curhatan di Page 3/4 agar tidak mepet layar */
+    #wallCurhatLocal {
+        padding: 10px !important;
+    }
+    
+    .closing-box {
+        width: 95% !important;
+        margin: 0 auto;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop><source src="bersamamuweb.mp3" type="audio/mpeg"></audio>
+
+    <div id="loginOverlay">
+        <div class="login-container">
+            <div class="login-text-side">
+                <h1>Sejuta Cerita <br><span>Untuk</span> <br>Rania</h1>
+            </div>
+            <div class="login-box" id="lBox">
+                <h2>Silahkan Login</h2>
+                <input type="text" id="userInput" placeholder="Username">
+                <input type="password" id="passInput" placeholder="Password">
+                <button class="btn-login-trigger" onclick="prosesMasuk()">Login</button>
+                <p id="pesanError" style="color: red; font-size: 12px; margin-top: 10px;"></p>
+            </div>
+        </div>
+    </div>
+
+    <nav id="mainNav">
+        <a href="#page1">Home</a>
+        <a href="#page2_container">Countdown</a>
+        <a href="#page3">Video</a>
+        <a href="#page4">Ngedate</a>
+        <a href="#page5">Budgeting</a>
+        <a href="#page6">Curhat</a>
+        <a href="#page7">Galeri</a>
+        <a href="#page8">Hero</a>
+        <a href="#" onclick="location.reload()">Logout</a>
+    </nav>
+
+    <section id="page1">
+        <div class="hero-left">
+    <h1 class="typing-text">Halo <br><span>Rania</span></h1>
+</div>
+        <div class="hero-right-potrait">
+    <div class="outer-ring"></div>
+    <div class="circle-glow">
+        <img src="rania.png" alt="Rania">
+    </div>
+</div>
+        <footer>@rizqyfath_</footer>
+    </section>
+
+    <div id="page2_container">
+        <div id="page2_sticky">
+            <video id="scrollVideo" preload="auto" muted playsinline>
+                <source src="videobg.mp4" type="video/mp4">
+            </video>
+            <div class="overlay-black"></div>
+            <div class="scroll-hint" id="hint"><p>SCROLL TERUS BRE</p><span class="arrow-down">↓</span></div>
+            <div class="countdown-container" id="movingCountdown">
+                <h2 style="margin-bottom: 20px; letter-spacing: 5px;">Menuju Dirgahayu Rania</h2>
+                <div id="timer">00d : 00h : 00m : 00s</div>
+            </div>
+        </div>
+        <footer>@rizqyfath_</footer>
+    </div>
+ 
+
+    <section id="page3">
+    <div class="v-frame">
+        <video id="videoHalaman3" autoplay muted loop controls>
+            <source src="videoweb.mp4" type="video/mp4">
+        </video>
+        
+        <div class="video-caption">
+            Moments with you are <span>My Favorite</span>
+        </div>
+    </div>
+    <footer>@rizqyfath_</footer>
+</section>
+
+    <section id="page4">
+    <div class="planner-container">
+        <h2>Date Planner <span>Rania & Fathur</span></h2>
+        
+        <div class="input-group">
+            <input type="text" id="dateInput" placeholder="Tanggal (Contoh: 20 April)">
+            <input type="text" id="activityInput" placeholder="Mau ngapain kita?">
+            <button onclick="addPlan()">Tambah Jadwal</button>
+        </div>
+
+        <div class="calendar-mockup">
+            <div class="cal-header">April 2026</div>
+            <div class="cal-grid" id="calendarGrid">
+                </div>
+        </div>
+    </div>
+    <footer>@rizqyfath_</footer>
+</section>
+
+    <section id="page5">
+    <div class="planner-container">
+        <h2>Financial <span>Tracker</span></h2>
+        
+        <div class="input-group">
+            <select id="kategoriInput" onchange="toggleFields()" style="padding: 10px; background: #111; color: white; border-radius: 5px;">
+                <option value="Persiapan Nikah">Persiapan Nikah</option>
+                <option value="Ngedate Harian">Ngedate Harian (Date)</option>
+            </select>
+
+            <div id="dynamicFields" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                <select id="namaInput" style="padding: 10px; background: #111; color: white; border-radius: 5px;">
+                    <option value="Rania">Rania</option>
+                    <option value="Fathur">Fathur</option>
+                </select>
+                <input type="date" id="tglInput" style="padding: 10px; background: #111; color: white; border-radius: 5px;">
+                <select id="sumberInput" style="padding: 10px; background: #111; color: white; border-radius: 5px;">
+                    <option value="Gaji/Tunkin">Gaji/Tunkin</option>
+                    <option value="Dinas">Dinas</option>
+                    <option value="Sumber lainnya">Sumber Lainnya</option>
+                </select>
+                <input type="text" id="uraianInput" placeholder="Uraian (Contoh: THR Lebaran)">
+            </div>
+
+            <input type="number" id="nominalInput" placeholder="Nominal (Rp)">
+            <button onclick="sendToSheet()">Kirim ke Spreadsheet</button>
+        </div>
+        
+        <div class="calendar-mockup" style="padding: 20px;">
+            <p style="color: #ccc; font-size: 14px;">Data otomatis terupdate ke sheet <strong>Menabung</strong> atau <strong>Anggaran Ngedate</strong>.</p>
+        </div>
+
+        <div class="calendar-mockup" style="margin-top: 20px; padding: 20px;">
+    <h3 style="color: #ff7b00; margin-bottom: 15px;">Ringkasan Dana</h3>
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <tr style="border-bottom: 1px solid #333;">
+            <th style="padding: 10px;">Kategori</th>
+            <th style="padding: 10px;">Total Saldo</th>
+        </tr>
+        <tr style="border-bottom: 1px solid #222;">
+            <td style="padding: 10px;">💍 Persiapan Nikah</td>
+            <td style="padding: 10px; color: #00ff00; font-weight: bold;" id="totalNikah">Rp 0</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px;">☕ Ngedate Harian</td>
+            <td style="padding: 10px; color: #00ff00; font-weight: bold;" id="totalNgedate">Rp 0</td>
+        </tr>
+    </table>
+</div>
+    </div>
+    <footer>@rizqyfath_</footer>
+</section>
+
+     <section id="page6" style="display: none; flex-direction: column; align-items: center; padding: 50px 20px; min-height: 100vh; background: #000;">
+    <div class="planner-container" style="max-width: 500px; width: 100%;">
+        <h2 style="color: white; text-align: center; margin-bottom: 20px;">Curahan <span>Hati</span></h2>
+        
+        <div class="input-group" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid #333;">
+            <select id="pengirimCurhat" style="width: 100%; padding: 12px; margin-bottom: 10px; background: #111; color: white; border: 1px solid #444; border-radius: 8px;">
+                <option value="Rania">Rania 🌸</option>
+                <option value="Fathur">Fathur ⚡</option>
+            </select>
+            <textarea id="isiCurhat" placeholder="Tulis apa yang kamu rasakan..." style="width: 100%; height: 100px; padding: 12px; background: #111; color: white; border: 1px solid #444; border-radius: 8px; resize: none; font-family: inherit;"></textarea>
+            <button onclick="kirimCurhat()" style="width: 100%; margin-top: 10px; background: linear-gradient(45deg, #ff7b00, #ff4500); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Kirim Pesan ❤️</button>
+        </div>
+
+        <div id="wallCurhatLocal" class="chat-container" style="margin-top: 30px; max-height: 500px; overflow-y: auto; padding-right: 10px; display: flex; flex-direction: column; gap: 15px;">
+            </div>
+    </div>
+    <footer>@rizqyfath_</footer>
+</section>
+
+   <section id="page7" style="display: none; min-height: 100vh; background: #000; flex-direction: column; justify-content: center; align-items: center; border-top: 1px solid #333; overflow: hidden; padding: 50px 0;">
+    
+    <h2 style="color: white; text-align: center; margin-bottom: 30px;">FathRan <span style="color: #ff7b00;">Chapter Gallery</span></h2>
+    
+    <div class="gallery-container">
+        <div class="gallery-track">
+            <img src="foto1.jpg"> <img src="foto2.jpg"> <img src="foto3.jpg"> <img src="foto4.jpg"> <img src="foto5.jpg">
+            <img src="foto6.jpg"> <img src="foto7.jpg"> <img src="foto8.jpg"> <img src="foto9.jpg"> <img src="foto10.jpg">
+            <img src="foto11.jpg"> <img src="foto12.jpg"> <img src="foto13.jpg"> <img src="foto14.jpg"> <img src="foto15.jpg">
+            <img src="foto16.jpg"> <img src="foto17.jpg"> <img src="foto18.jpg"> <img src="foto19.jpg"> <img src="foto20.jpg">
+
+            <img src="foto1.jpg"> <img src="foto2.jpg"> <img src="foto3.jpg"> <img src="foto4.jpg"> <img src="foto5.jpg">
+            <img src="foto6.jpg"> <img src="foto7.jpg"> <img src="foto8.jpg"> <img src="foto9.jpg"> <img src="foto10.jpg">
+            <img src="foto11.jpg"> <img src="foto12.jpg"> <img src="foto13.jpg"> <img src="foto14.jpg"> <img src="foto15.jpg">
+            <img src="foto16.jpg"> <img src="foto17.jpg"> <img src="foto18.jpg"> <img src="foto19.jpg"> <img src="foto20.jpg">
+        </div>
+    </div>
+
+    <p style="color: #444; font-size: 12px; margin-top: 20px; font-style: italic;">"Every photo has a story, and you are my favorite one."</p>
+    
+    <a href="https://drive.google.com/drive/folders/1dv-xSGntjkC5uNlmSFZsFX5QrDBUt9Y6?usp=drive_link" 
+       target="_blank" 
+       style="margin-top: 15px; padding: 10px 20px; background: rgba(255, 123, 0, 0.1); border: 1px solid #ff7b00; color: #ff7b00; border-radius: 30px; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" style="width: 18px; height: 18px; border: none; box-shadow: none;">
+        Akses Drive Galeri Rania Fathur
+    </a>
+
+<footer>@rizqyfath_</footer>
+</section>
+
+<section id="page8" style="display: none; min-height: 100vh; background: #0b0b0b; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px; text-align: center; border-top: 1px solid #222;">
+    
+    <div class="hero-profile">
+        <img src="fotofathur.jpg" alt="Fathur (Super Hero Rania)" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid #ff7b00; object-fit: cover; box-shadow: 0 0 25px rgba(255, 123, 0, 0.6); animation: pulse 2s infinite ease-in-out;">
+    </div>
+
+    <h2 style="color: white; margin-top: 25px; font-size: 1.8rem;">Fathur</h2>
+    <p style="color: #ff7b00; font-weight: bold; letter-spacing: 1.5px; margin-bottom: 35px; text-transform: uppercase; font-size: 12px;">
+        (Super Hero-nya Rania)
+    </p>
+
+    <div class="social-links" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px;">
+        <a href="https://wa.me/6282172485474?text=Halo%20Hero,%20Rania%20kangen" target="_blank" class="social-btn wa">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+
+        <a href="https://www.instagram.com/rizqyfath_?igsh=MWFrazdpdTUyN2E2dA==" target="_blank" class="social-btn ig">
+        <i class="fab fa-instagram"></i> Instagram
+        </a>
+
+        <a href="https://www.tiktok.com/@rizqyfath_?_r=1&_t=ZS-95f7HLIrdBs" target="_blank" class="social-btn tt">
+        <i class="fab fa-tiktok"></i> TikTok
+        </a>
+    </div>
+
+    <div class="closing-text" style="max-width: 500px; padding: 25px; border-top: 1px solid #333; background: rgba(255,255,255,0.02); border-radius: 15px;">
+        <p style="color: #eee; font-style: italic; line-height: 1.7; font-size: 15px;">
+            "Terima kasih sudah berjalan sejauh ini bersamaku. Website ini hanyalah sebagian kecil dari cerita panjang yang ingin aku tulis bersamamu. Ingat, kapan pun kamu butuh sandaran, Hero-mu ini selalu berjarak satu klik saja."
+        </p>
+        <p style="color: #ff7b00; margin-top: 25px; font-weight: bold; font-size: 1.2rem; letter-spacing: 1px;">
+            I Love You, Rania. ❤️
+        </p>
+    </div>
+
+    <footer style="margin-top: 60px; color: #eee; font-size: 10px;">
+        @rizqyfath_ | Forever & Always
+    </footer>
+</section>
+
+<style>
+
+/* Container chat */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Bubble umum */
+.chat-bubble {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+    animation: fadeInUp 0.4s ease;
+}
+
+/* Bubble kanan (Fathur) */
+.chat-kanan {
+    align-self: flex-end;
+    background: #4dabff;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+/* Bubble kiri (Rania) */
+.chat-kiri {
+    align-self: flex-start;
+    background: #ff85a2;
+    color: white;
+    border-bottom-left-radius: 4px;
+}
+
+/* Nama kecil */
+.chat-nama {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+
+/* Waktu */
+.chat-waktu {
+    font-size: 10px;
+    opacity: 0.6;
+    text-align: right;
+    margin-top: 5px;
+}
+
+/* Animasi masuk */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+    /* Styling Dasar Tombol Sosmed */
+    .social-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 25px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        color: white;
+    }
+
+    /* Warna Tombol WhatsApp */
+    .wa { background: #25d366; }
+    /* Warna Tombol Instagram (Gradient) */
+    .ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    /* Warna Tombol TikTok */
+    .tt { background: #000; border: 1px solid #fff; }
+
+    /* Efek Hover Tombol Sosmed */
+    .social-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        filter: brightness(1.1);
+    }
+
+    /* Animasi Denyut untuk Foto Profil */
+    @keyframes pulse {
+        0% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 123, 0, 0.5); }
+        50% { transform: scale(1.03); box-shadow: 0 0 25px rgba(255, 123, 0, 0.7); }
+        100% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 123, 0, 0.5); }
+    }
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>    
+    <script>
+        
+const firebaseConfig = {
+  apiKey: "AIzaSyBb8MBQcSydnB4yv-2AnMumNYRfUXcqXTo",
+  authDomain: "webran-82c68.firebaseapp.com",
+  databaseURL: "https://webran-82c68-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "webran-82c68",
+  storageBucket: "webran-82c68.firebasestorage.app",
+  messagingSenderId: "958222424870",
+  appId: "1:958222424870:web:5107db6b1939c383733fe7",
+  measurementId: "G-3FQJB6QGKL"
+};
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref("curhatan");
+
+        function prosesMasuk() {
+            const user = document.getElementById("userInput").value;
+            const pass = document.getElementById("passInput").value;
+            if(user === "herofathur" && pass === "raniaimut") {
+                document.getElementById("loginOverlay").style.display = "none";
+                document.getElementById("page1").style.display = "flex";
+                document.getElementById("page2_container").style.display = "block";
+                document.getElementById("page3").style.display = "flex";
+                document.getElementById("mainNav").style.display = "flex";
+                document.body.style.overflowY = "scroll";
+                document.getElementById("bgMusic").play();
+                const v3 = document.getElementById("videoHalaman3");
+                if(v3) v3.play();
+                document.getElementById("page4").style.display = "flex";
+                document.getElementById("page5").style.display = "flex"; // Pastikan ini FLEX agar CSS bekerja
+                document.getElementById("page6").style.display = "flex";
+                document.getElementById("page7").style.display = "flex";
+                document.getElementById("page8").style.display = "flex"; // Munculkan halaman penutup
+                loadPlans();
+                updateTabelTotal();
+            } else {
+                document.getElementById("pesanError").innerText = "Data Salah!";
+            }
+        }
+
+        const targetDate = new Date("June 15, 2026 00:00:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const gap = targetDate - now;
+            const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+            const h = String(Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            const m = String(Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            const s = String(Math.floor((gap % (1000 * 60)) / 1000)).padStart(2, '0');
+            document.getElementById("timer").innerText = `${d}d : ${h}h : ${m}m : ${s}s`;
+        }, 1000);
+
+        const vid = document.getElementById('scrollVideo');
+        const container = document.getElementById('page2_container');
+        const countdown = document.getElementById('movingCountdown');
+        const hint = document.getElementById('hint');
+
+        window.addEventListener('scroll', () => {
+            const scrollPos = window.pageYOffset;
+            const offsetTop = container.offsetTop;
+            const height = container.offsetHeight - window.innerHeight;
+
+            if (scrollPos >= offsetTop && scrollPos <= offsetTop + height) {
+                const progress = (scrollPos - offsetTop) / height;
+                if (vid.duration) { vid.currentTime = vid.duration * progress; }
+                const moveY = progress * -200; 
+                countdown.style.transform = `translateY(${moveY}px)`;
+                hint.style.transform = `translate(-50%, ${moveY * 0.5}px)`;
+                hint.style.opacity = (1 - (progress * 0.7));
+            }
+        });
+
+        // Fungsi agar menu navigasi ikut "highlight" saat scroll
+window.addEventListener('scroll', () => {
+    const nav = document.getElementById('mainNav');
+    
+    // Jika scroll lebih dari 50px, navigasi berubah jadi mode 'scrolled'
+    if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+    } else {
+        nav.classList.remove('scrolled');
+    }
+    
+    // Logika Highlight Menu Aktif (Scroll Spy)
+    let current = "";
+    const sections = document.querySelectorAll("section, #page2_container");
+    
+    sections.forEach((section) => {
+        const sectionTop = section.offsetTop;
+        if (pageYOffset >= sectionTop - 150) {
+            current = section.getAttribute("id");
+        }
+    });
+
+    document.querySelectorAll("nav a").forEach((a) => {
+        a.classList.remove("active");
+        if (a.getAttribute("href").includes(current)) {
+            a.classList.add("active");
+        }
+    });
+});
+
+// Fungsi untuk memuat data dari memori browser saat web dibuka
+function loadPlans() {
+    const savedPlans = JSON.parse(localStorage.getItem("datePlans")) || [];
+    const grid = document.getElementById("calendarGrid");
+    grid.innerHTML = ""; // Bersihkan tampilan sebelum memuat ulang
+
+    savedPlans.forEach((plan, index) => {
+        const newItem = document.createElement("div");
+        newItem.className = "date-item";
+        newItem.innerHTML = `
+            <strong>${plan.date}</strong> 
+            ${plan.activity}
+            <span onclick="deletePlan(${index})" style="float:right; cursor:pointer; color:gray; font-size:10px;">hapus</span>
+        `;
+        grid.appendChild(newItem);
+    });
+}
+
+// Fungsi untuk menambah jadwal baru dan menyimpannya
+function addPlan() {
+    const dateVal = document.getElementById("dateInput").value;
+    const activityVal = document.getElementById("activityInput").value;
+
+    if (dateVal === "" || activityVal === "") {
+        alert("Isi dulu dong tanggal sama kegiatannya!");
+        return;
+    }
+
+    // Ambil data lama, tambah data baru
+    const savedPlans = JSON.parse(localStorage.getItem("datePlans")) || [];
+    savedPlans.push({ date: dateVal, activity: activityVal });
+
+    // Simpan kembali ke localStorage
+    localStorage.setItem("datePlans", JSON.stringify(savedPlans));
+
+    // Reset input dan perbarui tampilan
+    document.getElementById("dateInput").value = "";
+    document.getElementById("activityInput").value = "";
+    loadPlans();
+}
+
+// Fitur opsional: Menghapus jadwal jika salah tulis
+function deletePlan(index) {
+    const savedPlans = JSON.parse(localStorage.getItem("datePlans")) || [];
+    savedPlans.splice(index, 1);
+    localStorage.setItem("datePlans", JSON.stringify(savedPlans));
+    loadPlans();
+}
+
+// Fungsi untuk mengubah tampilan input berdasarkan kategori
+function toggleFields() {
+    const kategori = document.getElementById("kategoriInput").value;
+    const dynamic = document.getElementById("dynamicFields");
+    
+    if (kategori === "Ngedate Harian") {
+        dynamic.innerHTML = `
+            <select id="namaInput" style="padding: 10px; background: #111; color: white; border-radius: 5px;">
+                <option value="Rania">Rania</option>
+                <option value="Fathur">Fathur</option>
+            </select>
+            <select id="bulanInput" style="padding: 10px; background: #111; color: white; border-radius: 5px;">
+                <option value="Januari">Januari</option> <option value="Februari">Februari</option>
+                <option value="Maret">Maret</option> <option value="April">April</option>
+                <option value="Mei">Mei</option> <option value="Juni">Juni</option>
+                <option value="Juli">Juli</option> <option value="Agustus">Agustus</option>
+                <option value="September">September</option> <option value="Oktober">Oktober</option>
+                <option value="November">November</option> <option value="Desember">Desember</option>
+            </select>
+        `;
+    } else {
+        dynamic.innerHTML = `
+            <select id="namaInput" style="padding: 10px; background: #111; color: white; border-radius: 5px;">
+                <option value="Rania">Rania</option>
+                <option value="Fathur">Fathur</option>
+            </select>
+            <input type="date" id="tglInput" style="padding: 10px; background: #111; color: white; border-radius: 5px;">
+            <select id="sumberInput" style="padding: 10px; background: #111; color: white; border-radius: 5px;">
+                <option value="Gaji/Tunkin">Gaji/Tunkin</option>
+                <option value="Perjadin">Perjadin</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+            <input type="text" id="uraianInput" placeholder="Uraian (Contoh: THR Lebaran)">
+        `;
+    }
+}
+
+async function sendToSheet() {
+    const kategori = document.getElementById("kategoriInput").value;
+    const nominal = document.getElementById("nominalInput").value;
+    const nama = document.getElementById("namaInput").value;
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxlAmu0esCcxQdWWTW0MnvuX2O5RMCMO81vMNu0W7uHMLyElhV9O4rqdDlQVumgvCZc1A/exec'; 
+
+    if (!nominal) { alert("Isi nominalnya dulu!"); return; }
+
+    let payload = {};
+    if (kategori === "Persiapan Nikah") {
+        payload = {
+            type: "tabungan",
+            nama: nama,
+            tanggal: document.getElementById("tglInput").value,
+            sumber: document.getElementById("sumberInput").value,
+            uraian: document.getElementById("uraianInput").value,
+            nominal: nominal
+        };
+    } else {
+        payload = {
+            type: "harian",
+            nama: nama, 
+            bulan: document.getElementById("bulanInput").value,
+            nominal: nominal
+        };
+    }
+
+    const btn = document.querySelector("button[onclick='sendToSheet()']");
+    btn.innerText = "Mengirim...";
+    btn.disabled = true;
+
+    try {
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+        
+        alert("Berhasil Terkirim!");
+        
+        // Panggil update tabel
+        await updateTabelTotal(); 
+        
+        // Reset Form
+        document.getElementById("nominalInput").value = "";
+        if(document.getElementById("uraianInput")) document.getElementById("uraianInput").value = "";
+
+    } catch (error) {
+        alert("Gagal kirim data.");
+        console.error(error);
+    } finally {
+        btn.innerText = "Kirim ke Spreadsheet";
+        btn.disabled = false;
+    }
+}
+
+// Fungsi untuk mengambil angka total dari Spreadsheet
+async function updateTabelTotal() {
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxlAmu0esCcxQdWWTW0MnvuX2O5RMCMO81vMNu0W7uHMLyElhV9O4rqdDlQVumgvCZc1A/exec'; 
+    try {
+        const response = await fetch(scriptURL);
+        const data = await response.json();
+        
+        // Update Angka Saldo
+        document.getElementById("totalNikah").innerText = "Rp " + Number(data.totalNikah).toLocaleString('id-ID');
+        document.getElementById("totalNgedate").innerText = "Rp " + Number(data.totalNgedate).toLocaleString('id-ID');
+
+        // Update Galeri Foto
+        const track = document.getElementById("galleryTrack");
+        if (data.fotos && data.fotos.length > 0) {
+            track.innerHTML = ""; // Hapus teks loading
+            
+            // Masukkan semua foto dari Drive
+            data.fotos.forEach(url => {
+                const img = document.createElement("img");
+                img.src = url;
+                img.loading = "lazy"; // Supaya web tidak berat
+                track.appendChild(img);
+            });
+
+            // Duplikat isi foto agar animasi scrolling-nya tidak putus (seamless)
+            track.innerHTML += track.innerHTML; 
+
+            // Atur kecepatan gerak berdasarkan jumlah foto
+            const kecepatan = data.fotos.length * 3; 
+            track.style.animationDuration = `${kecepatan}s`;
+        }
+    } catch (e) {
+        console.log("Error loading data: ", e);
+    }
+}
+
+
+
+// 1. Fungsi Kirim (Real-time Firebase)
+emailjs.init("OQ8-SK07QqDzyL5qO");
+function kirimCurhat() {
+    const nama = document.getElementById("pengirimCurhat").value;
+    const isi = document.getElementById("isiCurhat").value;
+
+    if (!nama || !isi) {
+        alert("Isi dulu ya!");
+        return;
+    }
+
+    const waktu = new Date().toLocaleString();
+
+    // Simpan ke Firebase
+    db.push({
+        nama: nama,
+        isi: isi,
+        waktu: waktu
+    });
+
+    // 🔥 LOGIKA EMAIL
+    let emailTujuan = "";
+
+    if (nama === "Rania") {
+        emailTujuan = "fathurstudy22@gmail.com"; // ke kamu
+    } else if (nama === "Fathur") {
+        emailTujuan = "officeraniap@gmail.com"; // ganti email Rania
+    }
+
+    // Kirim Email
+    emailjs.send("service_raniafathur", "template_08irtwb", {
+    nama: nama,
+    pesan: isi,
+    waktu: waktu,
+    to_email: emailTujuan,
+    subject: nama === "Rania" ? "💌 Dari Rania" : "⚡ Dari Fathur"
+})
+.then(function(response) {
+    console.log("EMAIL BERHASIL", response);
+})
+.catch(function(error) {
+    console.log("EMAIL GAGAL", error);
+});
+
+    document.getElementById("isiCurhat").value = "";
+}
+
+// 2. Fungsi Tampilkan (Otomatis deteksi perubahan data)
+db.on("value", (snapshot) => {
+    const wall = document.getElementById("wallCurhatLocal");
+    wall.innerHTML = "";
+
+    snapshot.forEach((childSnapshot) => {
+        const item = childSnapshot.val();
+
+        const isRania = item.nama === "Rania";
+
+        const bubble = document.createElement("div");
+
+        bubble.className = `chat-bubble ${isRania ? "chat-kiri" : "chat-kanan"}`;
+
+        const namaDisplay = isRania ? "🌸 Rania" : "⚡ Fathur";
+
+        bubble.innerHTML = `
+            <div class="chat-nama">${namaDisplay}</div>
+            <div>${item.isi}</div>
+            <div class="chat-waktu">${item.waktu}</div>
+        `;
+
+        wall.appendChild(bubble);
+    });
+
+    // auto scroll ke bawah
+    wall.scrollTop = wall.scrollHeight;
+});
+    </script>
+</body>
+</html>
