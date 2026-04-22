@@ -1279,62 +1279,61 @@ async function updateTabelTotal() {
     }
 }
 
-// 1. Fungsi Simpan Curhat
-function simpanCurhatLocal() {
-    const nama = document.getElementById("pengirimCurhat").value;
-    const pesan = document.getElementById("isiCurhat").value;
-    
-    if (!pesan.trim()) { alert("Isi dulu curhatannya!"); return; }
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-    const dataBaru = {
-        nama: nama,
-        pesan: pesan,
-        waktu: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })
-    };
+<script>
+  // Ganti dengan konfigurasi dari Firebase kamu tadi
+  const firebaseConfig = {
+  apiKey: "AIzaSyBb8MBQcSydnB4yv-2AnMumNYRfUXcqXTo",
+  authDomain: "webran-82c68.firebaseapp.com",
+  databaseURL: "https://webran-82c68-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "webran-82c68",
+  storageBucket: "webran-82c68.firebasestorage.app",
+  messagingSenderId: "958222424870",
+  appId: "1:958222424870:web:5107db6b1939c383733fe7",
+  measurementId: "G-3FQJB6QGKL"
+};
+  
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database().ref("curhatan");
 
-    // Ambil data lama dari localStorage
-    const listCurhat = JSON.parse(localStorage.getItem("curhatanKita")) || [];
-    
-    // Tambah data baru ke urutan paling atas
-    listCurhat.unshift(dataBaru);
-    
-    // Simpan kembali
-    localStorage.setItem("curhatanKita", JSON.stringify(listCurhat));
+  // FUNGSI KIRIM (GANTI YANG LAMA)
+  function kirimCurhat() {
+      const nama = document.getElementById("namaCurhat").value;
+      const isi = document.getElementById("isiCurhat").value;
 
-    // Reset input dan perbarui tampilan
-    document.getElementById("isiCurhat").value = "";
-    tampilkanCurhatLocal();
-}
+      if (!nama || !isi) return alert("Isi nama dan curhatan dulu ya!");
 
-// 2. Fungsi Tampilkan Curhat
-function tampilkanCurhatLocal() {
-    const wall = document.getElementById("wallCurhatLocal");
-    const listCurhat = JSON.parse(localStorage.getItem("curhatanKita")) || [];
-    
-    wall.innerHTML = "";
+      db.push({
+          nama: nama,
+          isi: isi,
+          waktu: new Date().toLocaleString()
+      });
 
-    if (listCurhat.length === 0) {
-        wall.innerHTML = `<p style="color: #666; text-align: center; font-style: italic;">Belum ada curhatan hari ini...</p>`;
-        return;
-    }
+      document.getElementById("isiCurhat").value = "";
+  }
 
-    listCurhat.forEach((item) => {
-        const card = document.createElement("div");
-        // Warna berbeda untuk Rania & Fathur
-        const warnaBatas = item.nama === "Rania" ? "#ff85a2" : "#4dabff";
-        const bgCard = item.nama === "Rania" ? "rgba(255, 133, 162, 0.1)" : "rgba(77, 171, 255, 0.1)";
-
-        card.style = `background: ${bgCard}; padding: 15px; border-radius: 12px; border-left: 5px solid ${warnaBatas}; animation: fadeIn 0.5s ease;`;
-        card.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <strong style="color: ${warnaBatas}; font-size: 14px;">${item.nama}</strong>
-                <small style="color: #888; font-size: 10px;">${item.waktu}</small>
-            </div>
-            <p style="color: #eee; margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-wrap;">${item.pesan}</p>
-        `;
-        wall.appendChild(card);
-    });
-}
+  // FUNGSI TAMPIL OTOMATIS (REALTIME)
+  db.on("value", (snapshot) => {
+      const wall = document.getElementById("wallCurhatLocal");
+      wall.innerHTML = "";
+      
+      snapshot.forEach((childSnapshot) => {
+          const item = childSnapshot.val();
+          const card = document.createElement("div");
+          
+          // Logika warna tetap sama seperti kode kamu
+          const warnaBatas = item.nama === "Rania" ? "#ff85a2" : "#4dabff";
+          const bgCard = item.nama === "Rania" ? "rgba(255, 133, 162, 0.1)" : "rgba(77, 171, 255, 0.1)";
+          
+          card.style = `background: ${bgCard}; padding: 15px; border-radius: 12px; border-left: 5px solid ${warnaBatas}; margin-bottom: 10px;`;
+          card.innerHTML = `<strong>${item.nama}</strong> <small>${item.waktu}</small><p>${item.isi}</p>`;
+          
+          wall.prepend(card); // Pesan terbaru muncul di paling atas
+      });
+  });
+</script>
     </script>
 </body>
 </html>
